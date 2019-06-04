@@ -18,25 +18,18 @@
 ### 使用
 
 ```go
-import "github.com/sgoby/opencc"
+import "github.com/wzshiming/opencc"
 
 ...
 
 //简体到繁體（臺灣正體標準）
-func Test_opencc(t *testing.T){
-	cc,err := NewOpenCC("s2twp")
-	if err != nil{
-		fmt.Println(err)
-		return
-	}
-	nText,err := cc.ConvertText(`迪拜（阿拉伯语：دبي，英语：Dubai），是阿拉伯联合酋长国人口最多的城市，位于波斯湾东南海岸，迪拜也是组成阿联酋七个酋长国之一——迪拜酋长国的首都。`)
-	if err != nil{
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(nText)
-
+cc, err := opencc.NewOpenCC(opencc.S2TWP)
+if err != nil {
+	fmt.Println(err)
+	return
 }
+nText := cc.ConvertText(`迪拜（阿拉伯语：دبي，英语：Dubai），是阿拉伯联合酋长国人口最多的城市，位于波斯湾东南海岸，迪拜也是组成阿联酋七个酋长国之一——迪拜酋长国的首都。`)
+fmt.Println(nText)
 // 输出:
 // 杜拜（阿拉伯語：دبي，英語：Dubai），是阿拉伯聯合大公國人口最多的城市，位於波斯灣東南海岸，杜拜也是組成阿聯酋七個酋長國之一——杜拜酋長國的首都。
 ```
