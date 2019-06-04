@@ -9,8 +9,26 @@ import (
 )
 
 const (
-	TYPE_OCD   = "ocd"
-	TYPE_GROUP = "group"
+	// Traditional Chinese (Hong Kong standard) to Simplified Chinese
+	HK2S = "hk2s"
+	// Simplified Chinese to Traditional Chinese (Taiwan standard, with phrases)
+	S2HK = "s2hk"
+	// Simplified Chinese to Traditional Chinese
+	S2T = "s2t"
+	// Simplified Chinese to Traditional Chinese (Taiwan standard)
+	S2TW = "s2tw"
+	// Simplified Chinese to Traditional Chinese (Taiwan standard, with phrases)
+	S2TWP = "s2twp"
+	// Traditional Chinese to Traditional Chinese (Hong Kong standard)
+	T2HK = "t2hk"
+	// Traditional Chinese to Simplified Chinese
+	T2S = "t2s"
+	// Traditional Chinese to Traditional Chinese (Taiwan standard)
+	T2TW = "t2tw"
+	// Traditional Chinese (Taiwan standard) to Simplified Chinese
+	TW2S = "tw2s"
+	// Traditional Chinese (Taiwan standard) to Simplified Chinese (with phrases)
+	TW2SP = "tw2sp"
 )
 
 type FileOCD string
