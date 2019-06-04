@@ -124,34 +124,24 @@ func (fo *FileOCD) readFile() (map[string][]string, int, int, error) {
 }
 
 //=============================================================
-func (c *Config) convertText(text string) (string, error) {
-	var err error
+func (c *Config) convertText(text string) string {
 	for _, cv := range c.ConversionChain {
-		text, err = cv.convertText(text)
-		if err != nil {
-			return text, err
-		}
+		text = cv.convertText(text)
 	}
-	return text, nil
+	return text
 }
-func (c *ConversionChain) convertText(text string) (string, error) {
-	var err error
-	text, err = c.Dict.convertTextWithMap(text)
-	if err != nil {
-		return text, err
-	}
-	return text, nil
+func (c *ConversionChain) convertText(text string) string {
+	return c.Dict.convertTextWithMap(text)
 }
 
 //
-func (d *Dict) convertTextWithMap(text string) (string, error) {
-	var err error
+func (d *Dict) convertTextWithMap(text string) string {
 	newText := text
 	runes := []rune(text)
 	//
 	if d.CfgMap != nil {
 		if len(runes) < d.minLen {
-			return text, nil
+			return text
 		}
 		//
 		maxL := d.maxLen
@@ -174,11 +164,7 @@ func (d *Dict) convertTextWithMap(text string) (string, error) {
 	}
 	//
 	for _, cd := range d.Dicts {
-		newText, err = cd.convertTextWithMap(newText)
-		if err != nil {
-			return text, err
-		}
-
+		newText = cd.convertTextWithMap(newText)
 	}
-	return newText, nil
+	return newText
 }

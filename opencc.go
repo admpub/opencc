@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"unicode"
 
@@ -42,19 +41,16 @@ func (oc *OpenCC) Name() string {
 func (oc *OpenCC) ConvertFile(in io.Reader, out io.Writer) error {
 	inReader := bufio.NewReader(in)
 	for {
-		lineText, readErr := inReader.ReadString('\n')
-		if readErr != nil && readErr != io.EOF {
-			return readErr
+		lineText, err := inReader.ReadString('\n')
+		if err != nil && err != io.EOF {
+			return err
 		}
-		nLineText, err := oc.splitText(lineText)
+		nLineText := oc.splitText(lineText)
+		_, err = io.WriteString(out, nLineText)
 		if err != nil {
 			return err
 		}
-		_, err = out.Write([]byte(nLineText))
-		if err != nil {
-			return err
-		}
-		if readErr == io.EOF {
+		if err == io.EOF {
 			break
 		}
 	}
@@ -62,47 +58,33 @@ func (oc *OpenCC) ConvertFile(in io.Reader, out io.Writer) error {
 }
 
 //
-func (oc *OpenCC) ConvertText(text string) (string, error) {
+func (oc *OpenCC) ConvertText(text string) string {
 	return oc.splitText(text)
 }
 
 //
-func (oc *OpenCC) splitText(text string) (string, error) {
+func (oc *OpenCC) splitText(text string) string {
 	prev := 0
 	newText := bytes.NewBuffer(nil)
 	for i, c := range text {
 		if isPunctuations(c) {
 			v := text[prev:i]
-			tx, err := oc.convertString(v)
-			if err != nil {
-				return text, err
-			}
+			tx := oc.convertString(v)
 			newText.WriteString(tx)
 			prev = i
 		}
 	}
 
 	v := text[prev:]
-	tx, err := oc.convertString(v)
-	if err != nil {
-		return text, err
-	}
+	tx := oc.convertString(v)
 	newText.WriteString(tx)
 
-	return newText.String(), nil
+	return newText.String()
 }
 
 //
-func (oc *OpenCC) convertString(text string) (string, error) {
-	var err error
-	if oc.conf == nil {
-		return text, fmt.Errorf("no config")
-	}
-	text, err = oc.conf.convertText(text)
-	if err != nil {
-		return text, err
-	}
-	return text, nil
+func (oc *OpenCC) convertString(text string) string {
+	return oc.conf.convertText(text)
 }
 
 //是否标点符号
