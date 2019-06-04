@@ -34,6 +34,10 @@ func NewOpenCC(conversions string) (*OpenCC, error) {
 	return &OpenCC{conf: conf}, nil
 }
 
+func (oc *OpenCC) Name() string {
+	return oc.conf.Name
+}
+
 //
 func (oc *OpenCC) ConvertFile(in io.Reader, out io.Writer) error {
 	inReader := bufio.NewReader(in)
