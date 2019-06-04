@@ -2,18 +2,14 @@ package opencc
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
-	"strings"
+	"unicode"
 
 	"github.com/wzshiming/opencc/data"
 )
-
-var punctuations []string = []string{
-	" ", "\n", "\r", "\t", "-", ",", ".", "?", "!", "*", "　",
-	"，", "。", "、", "；", "：", "？", "！", "…", "“", "”", "「",
-	"」", "—", "－", "（", "）", "《", "》", "．", "／", "＼"}
 
 type OpenCC struct {
 	conf *Config
@@ -68,32 +64,28 @@ func (oc *OpenCC) ConvertText(text string) (string, error) {
 
 //
 func (oc *OpenCC) splitText(text string) (string, error) {
-	tmp := make([]string, 0, len(text))
-	var newText string
-	for i, c := range strings.Split(text, "") {
-		if i > 0 && isPunctuations(c) {
-			if len(tmp) > 0 {
-				tx, err := oc.convertString(strings.Join(tmp, ""))
-				if err != nil {
-					return text, err
-				}
-				newText = newText + tx + c
-				tmp = tmp[:0]
-			} else {
-				newText = newText + c
+	prev := 0
+	newText := bytes.NewBuffer(nil)
+	for i, c := range text {
+		if isPunctuations(c) {
+			v := text[prev:i]
+			tx, err := oc.convertString(v)
+			if err != nil {
+				return text, err
 			}
-			continue
+			newText.WriteString(tx)
+			prev = i
 		}
-		tmp = append(tmp, c)
 	}
-	if len(tmp) > 0 {
-		tx, err := oc.convertString(strings.Join(tmp, ""))
-		if err != nil {
-			return text, err
-		}
-		newText = newText + tx
+
+	v := text[prev:]
+	tx, err := oc.convertString(v)
+	if err != nil {
+		return text, err
 	}
-	return newText, nil
+	newText.WriteString(tx)
+
+	return newText.String(), nil
 }
 
 //
@@ -110,15 +102,6 @@ func (oc *OpenCC) convertString(text string) (string, error) {
 }
 
 //是否标点符号
-func isPunctuations(character string) bool {
-	if len([]byte(character)) <= 1 {
-		return true
-	}
-	//
-	for _, c := range punctuations {
-		if c == character {
-			return true
-		}
-	}
-	return false
+func isPunctuations(character rune) bool {
+	return unicode.In(character, unicode.Punct, unicode.Space)
 }
