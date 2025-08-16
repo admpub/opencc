@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/wzshiming/opencc/data"
+	"github.com/admpub/opencc/data"
 )
 
 const (
@@ -71,7 +71,6 @@ func (cv *ConversionChain) init() error {
 	return cv.Dict.init()
 }
 
-//
 func (d *Dict) init() (err error) {
 	if len(d.File) > 0 {
 		d.CfgMap, d.maxLen, d.minLen, err = d.File.readFile()
@@ -80,8 +79,7 @@ func (d *Dict) init() (err error) {
 			return err
 		}
 	}
-	//
-	if d.Dicts != nil && len(d.Dicts) > 0 {
+	if len(d.Dicts) > 0 {
 		for _, childDict := range d.Dicts {
 			err = childDict.init()
 			if err != nil {
@@ -92,7 +90,6 @@ func (d *Dict) init() (err error) {
 	return nil
 }
 
-//
 func (fo *FileOCD) readFile() (map[string][]string, int, int, error) {
 	f, err := data.Asset("dictionary/" + string(*fo))
 	if err != nil {
@@ -100,10 +97,8 @@ func (fo *FileOCD) readFile() (map[string][]string, int, int, error) {
 	}
 	cfgMap := make(map[string][]string)
 	buf := bufio.NewReader(bytes.NewBuffer(f))
-	//
 	max := 0
 	min := 0
-	//
 	for {
 		line, err := buf.ReadString('\n')
 		if err != nil {
@@ -123,7 +118,7 @@ func (fo *FileOCD) readFile() (map[string][]string, int, int, error) {
 	return cfgMap, max, min, nil
 }
 
-//=============================================================
+// =============================================================
 func (c *Config) convertText(text string) string {
 	for _, cv := range c.ConversionChain {
 		text = cv.convertText(text)
@@ -134,7 +129,6 @@ func (c *ConversionChain) convertText(text string) string {
 	return c.Dict.convertTextWithMap(text)
 }
 
-//
 func (d *Dict) convertTextWithMap(text string) string {
 	newText := text
 	runes := []rune(text)

@@ -7,7 +7,7 @@ import (
 	"io"
 	"unicode"
 
-	"github.com/wzshiming/opencc/data"
+	"github.com/admpub/opencc/data"
 )
 
 type OpenCC struct {
@@ -37,7 +37,6 @@ func (oc *OpenCC) Name() string {
 	return oc.conf.Name
 }
 
-//
 func (oc *OpenCC) ConvertFile(in io.Reader, out io.Writer) error {
 	inReader := bufio.NewReader(in)
 	for {
@@ -57,12 +56,10 @@ func (oc *OpenCC) ConvertFile(in io.Reader, out io.Writer) error {
 	return nil
 }
 
-//
 func (oc *OpenCC) ConvertText(text string) string {
 	return oc.splitText(text)
 }
 
-//
 func (oc *OpenCC) splitText(text string) string {
 	prev := 0
 	newText := bytes.NewBuffer(nil)
@@ -82,12 +79,11 @@ func (oc *OpenCC) splitText(text string) string {
 	return newText.String()
 }
 
-//
 func (oc *OpenCC) convertString(text string) string {
 	return oc.conf.convertText(text)
 }
 
-//是否标点符号
+// 是否标点符号
 func isPunctuations(character rune) bool {
 	return unicode.In(character, unicode.Punct, unicode.Space)
 }
